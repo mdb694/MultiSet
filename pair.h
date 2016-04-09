@@ -20,15 +20,37 @@ class pair {
 			@param elem elemento della coppia
 			@param occ numero di occorrenze dell'elemento 
 	**/
-	pair(T elem, size_type occ);
+	pair(const T &elem, size_type occ);
 
 	/** Costruttore secondario
 			Crea una coppia con una sola occorrenza dell'elemento
 			@param elem elemento della coppia
 	**/
-	pair(T elem);
+	pair(const T &elem);
 
 	/** Distruttore **/
 	~pair(void);
+
+	/** Copy constructor 
+			@param other pair da copiare
+	**/
+	pair(const pair& other);
+
+	/** Operatore di assegnamento
+			@param other pair da cui effettuare la copiare
+	**/
+	pair& operator=(const pair &other);
+
+	/** Metodo getter dell'elemento
+	**/
+	T &element(void);
+
+	/** Metode getter costante dell'elemento
+	**/
+	const T &element(void) const;
+
+	/** Metodo getter delle occorrenze
+	**/
+	size_type occourrence(void);
 }
 #endif 

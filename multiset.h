@@ -174,7 +174,17 @@ class multiset {
 			_size++;
 		} else {
 			node *n = find_helper(elem);
+			n->data.set_occourrence(n->data.occourrence() + occ);
 		}
+	}
+
+	/** Metodo che valuta l'esistenza dell'elemento nella lista
+			@param elem l'elemento da cercare
+			@return true se l'elemento non esiste, false altrimenti.
+	**/
+	bool check(const T &elem) const {
+		node *n = find_helper(elem);
+		return (n==0);
 	}
 }; //fine classe multiset
 #endif

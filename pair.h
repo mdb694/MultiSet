@@ -80,5 +80,11 @@ class pair {
 	size_type occourrence() {
 		return _occourrence;
 	}
+
+	/** Matodo setter delle occorrenze
+	**/
+	void set_occourrence(size_type value) {
+		_occourrence = value;
+	}
 }; //fine classe
 #endif 

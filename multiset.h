@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <algorithm>
 #include <cassert>
+#include <stddef.h>
+#include <iostream>
 #include "pair.h"
 
 /** Classe che implementa un mutliset. I dati base sono coppie 
@@ -13,7 +15,7 @@ del funtore funct per la comparazione di due elementi.
 */
 template <typename T, typename funct>
 class multiset {
-
+	typedef unsigned int size_type;
 	/**Struct del nodo elementare della lista di elementi.
 	**/
 	struct node {
@@ -163,7 +165,7 @@ class multiset {
 			@param occ le occorrenze dell'elemento
 	**/
 	void add(const T &elem, size_type occ) {
-		if(check(elem)) {
+		if(!contains(elem)) {
 			if(_head == 0)
 				_head = new node(elem, occ);
 			else {
@@ -180,11 +182,137 @@ class multiset {
 
 	/** Metodo che valuta l'esistenza dell'elemento nella lista
 			@param elem l'elemento da cercare
-			@return true se l'elemento non esiste, false altrimenti.
+			@return true se l'elemento esiste, false altrimenti.
 	**/
-	bool check(const T &elem) const {
+	bool contains(const T &elem) const {
 		node *n = find_helper(elem);
-		return (n==0);
+		return (n!=0);
+	}
+
+	/** Forward iterator di sola lettura
+	**/
+	class const_iterator {
+		public:
+			typedef std::forward_iterator_tag iterator_category;
+			typedef pair<T> 																		value_type;
+			typedef ptrdiff_t 																difference_type;
+			typedef const pair<T>* 											pointer;
+			typedef const pair<T>& 											reference;
+
+			/** Costruttore di default
+			**/
+			const_iterator() {
+				n = 0;
+			}
+
+			/** Costruttore di copia
+					@param other l'iteratore da copiare
+			**/
+			const_iterator(const const_iterator &other) {
+				n = other.n;
+			}
+
+			/** Operatore di assegnamento
+					@param other l'iteratore da assegnare
+					@return *this
+			**/
+			const_iterator& operator=(const const_iterator &other) {
+				n = other.n;
+				return *this;
+			}
+
+			/** Distruttore
+			**/
+			~const_iterator() {
+
+			}
+
+			/** Dereferenziamento per reference
+					@return riferimento costante alla coppia
+			**/
+			const pair<T>& operator*() const {
+				return n->data;
+			}
+
+			/** Dereferenziamento per puntatore
+					@return puntatore costante alla coppia
+			**/
+			const pair<T>* operator->() const {
+				return&(n->data);
+			}
+
+			/** Post incremento
+					@return l'iteratore alla coppia precedente
+			**/
+			const_iterator operator++(int) {
+				const_iterator tmp(*this);
+				n = n->next;
+				return tmp;
+			}
+
+			/** Pre incremento
+					@return l'iteratore alla coppia successiva
+			**/
+			const_iterator& operator++() {
+				n = n->next;
+				return *this;
+			}
+
+			/** Operatore di confronto per l'uguaglianza
+					@param other l'iteratore da confrontare
+					@return true se i due iteratori puntano alla stessa posizione
+			**/
+			bool operator==(const const_iterator &other) const {
+				return n == other.n;
+			}
+
+			/** Operatore di confronto per la diversità
+					@param other l'iteratore da confrontare
+					@return false se i due iteratori puntano alla stessa posizione
+			**/
+			bool operator!=(const const_iterator &other) const {
+				return n!=other.n;
+			}
+		
+		private:
+			const node *n; ///< puntatore al nodo corrente del multiset
+			friend class multiset;
+
+			/** Costruttore secondario di inizializzazione
+					@param pn puntatore ad un nodo della lista del multiset
+			**/
+			const_iterator(const node *pn) {
+				n = pn;
+			}
+	}; //fine classe const_iterator
+	
+	/** Iteratore di inizio sequenza
+			@return l'iteratore al primo elemento della sequenza
+	**/
+	const_iterator begin() const {
+		return const_iterator(_head);
+	}
+
+	/** Iteratore di fine sequenza
+			@return l'iteratore all'ultimo elemento della sequenza
+	**/
+	const_iterator end() const {
+		return const_iterator(0);
 	}
 }; //fine classe multiset
+
+/** Operatore di stream di output per la stampa del multiset
+		@param os stream di output
+		@param ms multiset da stampare
+		@return lo stream di output
+**/
+template<typename T, typename F>
+std::ostream & operator<<(std::ostream &os, const multiset<T,F> &ms) {
+	typename multiset<T,F>::const_iterator i,ie;
+
+	for(i=ms.begin(), ie=ms.end();i!=ie;++i)
+		os<<"<"<<i->element()<<", "<<i->occourrence()<<"> ";
+
+	return os;
+}
 #endif

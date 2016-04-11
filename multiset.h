@@ -85,6 +85,7 @@ class multiset {
 
 	node *_head; ///< testa del multiset
 	int _size; ///< numero di elementi base(numero di nodi)
+	int _numbelement; ///< numero totale di elementi
 
 	/**Metodo ausiliario che ritorna il puntatore all'elemento
 			passato come argomento
@@ -174,9 +175,32 @@ class multiset {
 				_head->next = tmp;
 			}
 			_size++;
+			_numbelement += occ;
 		} else {
 			node *n = find_helper(elem);
 			n->data.set_occourrence(n->data.occourrence() + occ);
+			_numbelement += occ;
+		}
+	}
+
+	/**Metodo che inserisce nel multiset un nuovo elemento base.
+			@param elem l'elemento
+	**/
+	void add(const T &elem) {
+		if(!contains(elem)) {
+			if(_head == 0)
+				_head = new node(elem);
+			else {
+				node *tmp = _head;
+				_head = new node(elem);
+				_head->next = tmp;
+			}
+			_size++;
+			_numbelement++;
+		} else {
+			node *n = find_helper(elem);
+			n->data.set_occourrence(n->data.occourrence() + 1);
+			_numbelement ++;
 		}
 	}
 
@@ -187,6 +211,13 @@ class multiset {
 	bool contains(const T &elem) const {
 		node *n = find_helper(elem);
 		return (n!=0);
+	}
+
+	/** Ritorna il numero di elementi del multiset
+			@return il numero di elementi del multiset
+	**/
+	int get_numbelement() const {
+		return _numbelement;
 	}
 
 	/** Forward iterator di sola lettura

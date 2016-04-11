@@ -77,7 +77,7 @@ class pair {
 
 	/** Metodo getter delle occorrenze
 	**/
-	size_type occourrence() {
+	size_type occourrence() const{
 		return _occourrence;
 	}
 

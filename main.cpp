@@ -33,6 +33,11 @@ void test_maultiset_1() {
 	ms.add(8, 4);
 
 	std::cout<<ms<<std::endl;
+	std::cout<<"Numero elementi: "<<ms.get_numbelement()<<std::endl;
+	std::cout<<"Elemento 1 contenuto? "<<ms.contains(1)<<std::endl;
+	std::cout<<"Elemento 2 contenuto? "<<ms.contains(2)<<std::endl;
+	std::cout<<"Occorrenze elemento 1: "<<ms.get_occourrence(1)<<std::endl;
+	std::cout<<"Occorrenze elemento 2: "<<ms.get_occourrence(2)<<std::endl;
 
 	ms.add(1, 3);
 	ms.add(6);
@@ -40,6 +45,9 @@ void test_maultiset_1() {
 	ms.add(8, 3);
 
 	std::cout<<ms<<std::endl;
+	std::cout<<"Numero elementi: "<<ms.get_numbelement()<<std::endl;
+	std::cout<<"Occorrenze elemento 1: "<<ms.get_occourrence(1)<<std::endl;
+	std::cout<<"Occorrenze elemento 2: "<<ms.get_occourrence(2)<<std::endl;
 }
 
 

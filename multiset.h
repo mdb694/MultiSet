@@ -108,7 +108,7 @@ class multiset {
 
 	/**Costruttore di default
 	**/
-	multiset() : _head(0), _size(0) {
+	multiset() : _head(0), _size(0), _numbelement(0) {
 
 	}
 
@@ -134,7 +134,7 @@ class multiset {
 	/**Copy constructor
 			@param other il multiset da copiare
 	**/
-	multiset(const multiset& other) : _head(0), _size(0) {
+	multiset(const multiset& other) : _head(0), _size(0), _numbelement(0) {
 		node *temp = other._head;
 
 		try {
@@ -157,6 +157,7 @@ class multiset {
 			multiset temp(other);
 			std::swap(this->_head, temp._head);
 			std::swap(this->_size, temp._size);
+			std::swap(this->_numbelement, temp._numbelement);
 		}
 		return *this;
 	}
@@ -218,6 +219,18 @@ class multiset {
 	**/
 	int get_numbelement() const {
 		return _numbelement;
+	}
+
+	/** Ritorna il numero di occorrenze di un elemento del multiset
+			@param elem l'elemento da cercare'
+			@return il numero di occorrenze dell'ellemento
+	**/
+	size_type get_occourrence(const T &elem) const {
+		node *n = find_helper(elem);
+		if(n!=0)
+			return n->data.occourrence();
+		else
+			return 0;
 	}
 
 	/** Forward iterator di sola lettura

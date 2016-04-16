@@ -48,6 +48,28 @@ void test_maultiset_1() {
 	std::cout<<"Numero elementi: "<<ms.get_numbelement()<<std::endl;
 	std::cout<<"Occorrenze elemento 1: "<<ms.get_occourrence(1)<<std::endl;
 	std::cout<<"Occorrenze elemento 2: "<<ms.get_occourrence(2)<<std::endl;
+
+	multiset<int, compare_int> scms;
+
+	
+	scms.add(6,2);
+	scms.add(1,4);
+	scms.add(8,7);
+	scms.add(9,4);
+
+	std::cout<<scms<<std::endl;
+	std::cout<<(scms==ms)<<std::endl;
+
+	multiset<int, compare_int> thms;
+
+	
+	thms.add(4,2);
+	thms.add(3,4);
+	thms.add(2,2);
+	thms.add(1,4);
+	
+	std::cout<<thms<<std::endl;
+	std::cout<<(thms==ms)<<std::endl;
 }
 
 

@@ -81,6 +81,7 @@ class multiset {
 			}
 			return *this;
 		}
+
 	}; //fine struct node
 
 	node *_head; ///< testa del multiset
@@ -160,6 +161,30 @@ class multiset {
 			std::swap(this->_numbelement, temp._numbelement);
 		}
 		return *this;
+	}
+
+	/**Operatore di confronto.
+			@param other il multiset da confrontare
+			@return true se i due multiset contengono gli stessi elementi con
+											le stesse occorrenze, false altrimenti
+	**/
+	bool operator==(const multiset &other) const {
+		typename multiset<T,funct>::const_iterator i,ie,j,je;
+		if (this->_size != other._size){
+			return false;
+		} else {
+			for(i=this->begin(), ie=this->end();i!=ie;++i) {
+				bool ok = false;
+				for(j=other.begin(), je=other.end();j!=je;++j)	{
+					if (comp(i, j)) {
+						ok = true;
+					}
+				}
+				if (ok == false)
+					return false;
+			}
+		}
+	return true;
 	}
 
 	/**Metodo che inserisce nel multiset un nuovo elemento base.
@@ -342,6 +367,24 @@ class multiset {
 	**/
 	const_iterator end() const {
 		return const_iterator(0);
+	}
+	
+
+	/** Metodo di supporto per l'operatore ==
+					confronta se due pair sono uguali
+					@param first il primo iteratore
+					@param second il secondo iteratore
+	**/
+	bool comp(typename multiset<T,funct>::const_iterator first, 
+											typename multiset<T,funct>::const_iterator second) const {
+		funct comp;
+		
+		if (comp(first->element(), second->element())) {
+			if (first->occourrence() == second->occourrence()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }; //fine classe multiset
 

@@ -86,5 +86,6 @@ class pair {
 	void set_occourrence(size_type value) {
 		_occourrence = value;
 	}
+
 }; //fine classe
 #endif 

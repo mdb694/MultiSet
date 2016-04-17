@@ -8,6 +8,18 @@
 #include <iostream>
 #include "pair.h"
 
+/** Classe che implenta una eccezione custom per
+ il multiset.
+**/
+class element_not_found : public std::runtime_error {
+public:
+	/**Costruttore secondario che prende un messaggio
+		@param msg messaggio dell'errore
+	*/
+	element_not_found(const char *msg) : std::runtime_error(msg) {}	
+};
+
+
 /** Classe che implementa un mutliset. I dati base sono coppie 
 <elemento, occorrenze>. La classe memorizza tali coppie attraverso
 una lista. La classe richiede la specifica del tipo di elemento T e
@@ -105,6 +117,17 @@ class multiset {
 		return 0;
 	}
 
+	node *find_previous(const node *mynode) const {
+		node *curr = _head;
+		node *next = curr->next;
+
+		while(mynode != next || next == 0) {
+			curr = next;
+			next = curr->next;	
+		}
+		return curr;
+	}
+
 	public:
 
 	/**Costruttore di default
@@ -116,9 +139,10 @@ class multiset {
 	/**Distruttore
 	**/
 	~multiset() {
-		clear();	
+		clear();
 	}
 
+	
 	/** Metodo che svuota il multiset
 	**/
 	void clear() {
@@ -230,6 +254,31 @@ class multiset {
 		}
 	}
 
+	/** Metodo che rimuove nel multiset un occorrenza dell'elemento
+			@param elem l'elemento da rimuovere
+	**/
+	void remove(const T &elem) {
+		if(contains(elem)) {
+			node *n = find_helper(elem);
+			if(n->data.occourrence() > 1)
+				n->data.set_occourrence(n->data.occourrence() - 1);
+			else {
+				node *prev = find_previous(n);
+				prev->next = n->next;
+				delete n;
+			}
+		} else throw element_not_found("Element not found");
+	}
+
+	/** Metodo che rimuove nel multiset un numero di occorrenza dell'elemento
+			@param elem l'elemento da rimuovere
+			@param occ il numero di occorrenze
+	**/
+	void remove(const T &elem, size_type occ) {
+	 for (int i = 0; i < occ; i++)
+			remove(elem);
+	}
+
 	/** Metodo che valuta l'esistenza dell'elemento nella lista
 			@param elem l'elemento da cercare
 			@return true se l'elemento esiste, false altrimenti.
@@ -258,7 +307,7 @@ class multiset {
 			return 0;
 	}
 
-	/** Forward iterator di sola lettura
+	/** Forward pair iterator di sola lettura
 	**/
 	class const_iterator {
 		public:
@@ -369,7 +418,151 @@ class multiset {
 		return const_iterator(0);
 	}
 	
+	/** Forward single element iterator di sola lettura
+	**/
+	class const_element_iterator {
+		public:
+			typedef std::forward_iterator_tag iterator_category;
+			typedef T						 																		value_type;
+			typedef ptrdiff_t 																difference_type;
+			typedef const T* 																	pointer;
+			typedef const T&																		reference;
 
+			/** Costruttore di default
+			**/
+			const_element_iterator() {
+				n = 0;
+				elem = 0;
+				nocc = 0;
+			}
+
+			/** Costruttore di copia
+					@param other l'iteratore da copiare
+			**/
+			const_element_iterator(const const_element_iterator &other) {
+				elem = other.elem;
+				n = other.n;
+				nocc = other.nocc;
+			}
+
+			/** Operatore di assegnamento
+					@param other l'iteratore da assegnare
+					@return *this
+			**/
+			const_element_iterator& operator=(const const_element_iterator &other) {
+				elem = other.elem;
+				n = other.n;
+				nocc = other.nocc;
+				return *this;
+			}
+
+			/** Distruttore
+			**/
+			~const_element_iterator() {
+
+			}
+
+			/** Dereferenziamento per reference
+					@return riferimento costante all'elemento
+			**/
+			const T& operator*() const {
+				return *(elem);
+			}
+
+			/** Dereferenziamento per puntatore
+					@return puntatore costante all'elemento
+			**/
+			const T* operator->() const {
+				return elem;
+			}
+
+			/** Post incremento
+					@return l'iteratore all'elemento precedente
+			**/
+			const_element_iterator operator++(int) {
+				const_element_iterator tmp(*this);
+				if(nocc > 1) {
+					nocc--;
+				} else {
+					n = n->next;
+					if (n!=0){
+						elem = &(n->data.element());
+						nocc = n->data.occourrence();
+					} else {
+						elem = 0;
+						nocc = 0;
+					}
+				}
+				return tmp;
+			}
+
+			/** Pre incremento
+					@return l'iteratore all'elemento successivo
+			**/
+			const_element_iterator& operator++() {
+				if(nocc > 1) {
+					nocc--;
+					return *this;
+				} else {
+					n = n->next;
+					if(n!=0){
+						elem = &(n->data.element());
+						nocc = n->data.occourrence();
+					} else {
+						elem = 0;
+						nocc = 0;
+					}
+					return *this;
+				}
+			}
+
+			/** Operatore di confronto per l'uguaglianza
+					@param other l'iteratore da confrontare
+					@return true se i due iteratori puntano alla stessa posizione
+			**/
+			bool operator==(const const_element_iterator &other) const {
+				return (n == other.n && nocc == other.nocc && elem == other.elem);
+			}
+
+			/** Operatore di confronto per la diversità
+					@param other l'iteratore da confrontare
+					@return false se i due iteratori puntano alla stessa posizione
+			**/
+			bool operator!=(const const_element_iterator &other) const {
+				return (n!=other.n || nocc!=other.nocc || elem!= other.elem);
+			}
+		
+		private:
+			const node *n; ///< puntatore al nodo corrente del multiset
+			const T *elem; ///< puntatore all'elemento del nodo attuale
+			size_type nocc; ///<numero occorrenze elemento nodo n
+			friend class multiset;
+
+			/** Costruttore secondario di inizializzazione
+					@param pn puntatore ad un nodo della lista del multiset
+			**/
+			const_element_iterator(const node *pn) {
+				n = pn;
+				elem = &(pn->data.element());
+				nocc = pn->data.occourrence();
+			}
+	}; //fine classe const_element_iterator
+	
+	/** Iteratore di inizio sequenza
+			@return l'iteratore al primo elemento della sequenza
+	**/
+	const_element_iterator elem_begin() const {
+		return const_element_iterator(_head);
+	}
+
+	/** Iteratore di fine sequenza
+			@return l'iteratore all'ultimo elemento della sequenza
+	**/
+	const_element_iterator elem_end() const {
+		return const_element_iterator();
+	}
+
+	private:
 	/** Metodo di supporto per l'operatore ==
 					confronta se due pair sono uguali
 					@param first il primo iteratore
@@ -402,4 +595,5 @@ std::ostream & operator<<(std::ostream &os, const multiset<T,F> &ms) {
 
 	return os;
 }
+
 #endif

@@ -23,7 +23,7 @@ private:
 
 //................................................//............................//..............
 
-void test_maultiset_1() {
+void test_multiset_1() {
 	std::cout<<"..............PRIMO TEST MULTISET................."<<std::endl;
 	multiset<int, compare_int> ms;
 
@@ -70,13 +70,47 @@ void test_maultiset_1() {
 	
 	std::cout<<thms<<std::endl;
 	std::cout<<(thms==ms)<<std::endl;
+	
+	thms.remove(1);
+	std::cout<<thms<<std::endl;
+	thms.remove(2);
+	thms.remove(2);
+	std::cout<<thms<<std::endl;
+
+	thms.remove(3,4);
+	std::cout<<thms<<std::endl;
+	
+	std::cout<<ms<<std::endl;
+	typename multiset<int,compare_int>::const_element_iterator i,ie;
+	for(i=ms.elem_begin(), ie=ms.elem_end();i!=ie;++i)
+		std::cout<<*i<<", ";
+	std::cout<<std::endl;
+
+	std::cout<<ms<<std::endl<<std::endl<<std::endl;
+}
+
+void test_multiset_2() {
+	std::cout<<"..............SECONDO TEST MULTISET................."<<std::endl;
+
+	multiset<std::string, compare_string> msstring;
+
+	msstring.add("pippo",6);
+	msstring.add("pluto",2);
+	msstring.add("paperino",3);
+	msstring.add("minni",9);
+
+	std::cout<<msstring<<std::endl;
+	typename multiset<std::string,compare_string>::const_element_iterator i,ie;
+	for(i=msstring.elem_begin(), ie=msstring.elem_end();i!=ie;++i)
+		std::cout<<*i<<", ";
+	std::cout<<std::endl;
 }
 
 
 
 int main() {
-	test_maultiset_1();
-//	test_maultiset_2();
+	test_multiset_1();
+	test_multiset_2();
 
 	return 0;
 }

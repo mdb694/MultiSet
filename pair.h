@@ -38,8 +38,7 @@ class pair {
 
 	/** Distruttore **/
 	~pair() {
-		_element = 0;
-		_occourrence = 0;
+
 	}
 
 	/** Copy constructor 
